@@ -5,96 +5,183 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Skilful Steering</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 4 62 58H2Z' fill='%23d4202b'/%3E%3Cpath d='M32 16 52 52H12Z' fill='%23fff'/%3E%3Cpath d='M17 36 22 30H44V36H36V48H29V39Z' fill='%23111'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23171717'/%3E%3Cpath d='M8 34 18 22H56V34H46V54H34V40Z' fill='%23fbf6ec'/%3E%3C/svg%3E">
+<link rel="preload" href="fonts/PMCHeader.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/PMCFont.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-  :root { --tar:#1c1d20; --tar2:#26282c; --line:#f4f4f2; --dim:#a3a6ab; --red:#d4202b; --ease:cubic-bezier(.16,1,.3,1); }
-  * { box-sizing:border-box; margin:0; }
-  html, body { background:var(--tar); color:var(--line); font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
-  body { min-height:100vh; display:flex; flex-direction:column; }
-  ::selection { background:var(--line); color:var(--tar); }
-  .road { height:6px; background:repeating-linear-gradient(90deg,var(--line) 0 46px,transparent 46px 82px); opacity:.85; }
-  main { flex:1; width:min(1080px,100% - 40px); margin:0 auto; padding:56px 0 64px; }
-  .title { display:block; width:min(460px,80%); height:auto; margin:0 auto 28px; }
-  .lock { max-width:420px; margin:0 auto; text-align:center; }
-  .lock p { color:var(--dim); margin-bottom:20px; }
-  form { display:flex; gap:10px; }
-  input[type=password], input[type=text] {
-    flex:1; min-width:0; background:var(--tar2); color:var(--line); border:2px solid #3a3d42; border-radius:10px;
-    padding:13px 15px; font:inherit; outline:none; transition:border-color .2s var(--ease);
+  @font-face { font-family: 'PMC Header'; src: url(fonts/PMCHeader.woff2) format('woff2'); font-weight: 100 900; font-display: swap; }
+  @font-face { font-family: 'PMC Font'; src: url(fonts/PMCFont.woff2) format('woff2'); font-weight: 100 900; font-display: swap; }
+  @font-face { font-family: 'PMC Symbols L2'; src: url(fonts/PMCSymbolsL2.woff2) format('woff2'); font-display: swap; }
+  @font-face { font-family: 'PMC Symbols L4'; src: url(fonts/PMCSymbolsL4.woff2) format('woff2'); font-display: swap; }
+
+  :root {
+    --paper: #fbf6ec; --white: #fbf6ec; --ink: #171717; --g1: #337957; --g2: #1a4934; --gold: #b49a57; --danger: #a33a2b;
+    --d: 'PMC Symbols L2', 'PMC Header', 'Arial Narrow', Impact, sans-serif;
+    --t: 'PMC Symbols L4', 'PMC Font', 'Courier New', monospace;
+    --x: cubic-bezier(.16, 1, .3, 1); --e: cubic-bezier(.7, 0, .2, 1);
   }
-  input:focus { border-color:var(--line); }
-  button, .btn {
-    display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--line); color:var(--tar);
-    border:0; border-radius:10px; padding:13px 20px; font:600 1rem system-ui,sans-serif; cursor:pointer; text-decoration:none;
-    transition:transform .15s var(--ease), background .2s var(--ease);
+  *, *::before, *::after { box-sizing: border-box; }
+  html { font-size: 15px; -webkit-text-size-adjust: 100%; scrollbar-color: var(--ink) var(--paper); }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 400 1.05rem/1.65 var(--t); font-synthesis: none; -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; flex-direction: column; }
+  ::selection { background: var(--gold); color: var(--ink); }
+  ::-webkit-scrollbar { width: 14px; height: 14px; }
+  ::-webkit-scrollbar-track { background: var(--paper); border-left: 3px solid var(--ink); }
+  ::-webkit-scrollbar-thumb { background: var(--g1); border: 3px solid var(--ink); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+  h1, h2, h3, .d, .btn, .label { font-family: var(--d); text-transform: uppercase; font-weight: 400; letter-spacing: .03em; margin: 0; }
+  p { margin: 0; max-width: 66ch; }
+  button, input { font: inherit; color: inherit; }
+  :focus-visible { outline: 4px solid var(--g1); outline-offset: 3px; }
+
+  /* top bar */
+  .top { background: var(--ink); color: var(--white); height: 58px; display: flex; align-items: center; padding: 0 24px; gap: 14px; }
+  .top .name { font-family: var(--d); text-transform: uppercase; font-size: 1.7rem; line-height: 1; letter-spacing: .03em; }
+  .top .tag { font-family: var(--d); text-transform: uppercase; font-size: .95rem; padding: 4px 8px; border: 2px solid var(--white); opacity: .85; }
+  .top .sp { flex: 1; }
+  #lockbtn { display: none; }
+
+  main { width: min(1120px, 100% - 40px); margin: 0 auto; padding: 0 0 70px; flex: 1; }
+
+  /* title block with halftone */
+  .hero { position: relative; padding: 54px 0 40px; overflow: hidden; }
+  .ht { position: absolute; top: 0; right: -20px; width: min(54vw, 520px); aspect-ratio: 1; color: var(--g1); opacity: .42; pointer-events: none; }
+  .ht i { position: absolute; inset: 0; }
+  .ht i:nth-child(1) { background: radial-gradient(circle at center, currentColor 0 3.9px, transparent 4.1px) 0 0 / 13px 13px; -webkit-mask-image: radial-gradient(circle farthest-corner at 100% 0, #000 0 8%, transparent 32%); mask-image: radial-gradient(circle farthest-corner at 100% 0, #000 0 8%, transparent 32%); }
+  .ht i:nth-child(2) { background: radial-gradient(circle at center, currentColor 0 2.7px, transparent 2.9px) 0 0 / 13px 13px; -webkit-mask-image: radial-gradient(circle farthest-corner at 100% 0, transparent 0 8%, #000 24%, transparent 50%); mask-image: radial-gradient(circle farthest-corner at 100% 0, transparent 0 8%, #000 24%, transparent 50%); }
+  .ht i:nth-child(3) { background: radial-gradient(circle at center, currentColor 0 1.5px, transparent 1.7px) 0 0 / 13px 13px; -webkit-mask-image: radial-gradient(circle farthest-corner at 100% 0, transparent 0 24%, #000 42%, transparent 70%); mask-image: radial-gradient(circle farthest-corner at 100% 0, transparent 0 24%, #000 42%, transparent 70%); }
+  .label { font-size: 1.15rem; opacity: .8; display: block; margin-bottom: 14px; }
+  .title { position: relative; display: block; width: min(640px, 92%); height: auto; animation: rise .9s var(--x) both; }
+  .hero p { position: relative; margin-top: 22px; font-size: 1.1rem; animation: rise .9s .09s var(--x) both; }
+
+  /* plates */
+  .plate { position: relative; background: var(--paper); border: 3px solid var(--ink); box-shadow: 5px 5px 0 var(--g2); padding: 22px; margin-bottom: 26px; animation: rise .9s var(--x) both; }
+  .plate.ink { background: var(--ink); color: var(--white); box-shadow: 5px 5px 0 var(--g1); }
+  .plate h2 { font-size: 1.9rem; line-height: .95; margin-bottom: 16px; }
+
+  /* lock: wide card */
+  .lock { display: grid; grid-template-columns: 1fr 1.2fr; gap: 28px; align-items: center; }
+  .lock h2 { font-size: 2.4rem; margin-bottom: 8px; }
+  .row { display: flex; gap: 12px; }
+  input[type=password] { flex: 1; min-width: 0; background: var(--paper); border: 3px solid var(--ink); padding: 12px 14px; font-family: var(--t); font-size: 1.1rem; border-radius: 0; transition: box-shadow .1s; }
+  input[type=password]:focus { outline: none; box-shadow: 5px 5px 0 var(--g1); }
+  .err { color: var(--danger); min-height: 1.6em; margin-top: 12px; font-size: .95rem; }
+  .shake { animation: shake .3s var(--x); }
+  @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+
+  /* buttons */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 9px 15px; background: transparent; color: var(--ink); border: 2px solid currentColor; box-shadow: 3px 3px 0 var(--g2); font-size: 1.15rem; line-height: 1; cursor: pointer; white-space: nowrap; transition: transform .1s var(--x), box-shadow .1s, background .1s, color .1s; }
+  .btn:hover { box-shadow: 5px 5px 0 var(--g2); background: var(--ink); color: var(--white); transform: translate(-2px, -2px); }
+  .btn:active { transition-duration: .04s; box-shadow: 2px 2px 0 var(--g2); transform: translate(1px, 1px); }
+  .btn.primary { background: var(--ink); color: var(--white); border-color: var(--ink); box-shadow: 5px 5px 0 var(--g2); font-size: 1.35rem; padding: 12px 22px; }
+  .btn.primary:hover { background: var(--g1); border-color: var(--g1); box-shadow: 8px 8px 0 var(--g2); }
+  .btn.primary:active { box-shadow: 2px 2px 0 var(--g2); }
+  .btn[disabled] { opacity: .45; pointer-events: none; }
+  .btn.on { background: var(--ink); color: var(--white); }
+
+  /* app */
+  #app { display: none; }
+  #app.on { display: block; }
+  .grid2 { display: grid; grid-template-columns: 1.6fr 1fr; gap: 26px; align-items: start; }
+  .tools { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+  .tester { font-family: 'Skilful Steering', var(--d); font-size: 104px; line-height: 1.08; outline: none; word-break: break-word; min-height: 1.2em; padding: 6px 0; text-transform: none; }
+
+  .sld { display: grid; gap: 4px; margin-bottom: 18px; max-width: 420px; }
+  .sld-top { display: flex; align-items: baseline; justify-content: space-between; }
+  .sld-l { font-family: var(--d); text-transform: uppercase; font-size: 1.1rem; }
+  .sld-v { font-family: var(--d); font-size: 1rem; padding: 3px 8px; background: var(--ink); color: var(--white); }
+  .sld-in { --p: 45%; -webkit-appearance: none; appearance: none; width: 100%; height: 32px; margin: 0; background: transparent; cursor: pointer; }
+  .sld-in::-webkit-slider-runnable-track { height: 14px; border: 3px solid var(--ink); background: linear-gradient(to right, var(--g1) 0 var(--p), var(--paper) var(--p) 100%); }
+  .sld-in::-moz-range-track { height: 8px; border: 3px solid var(--ink); background: var(--paper); }
+  .sld-in::-moz-range-progress { height: 8px; background: var(--g1); }
+  .sld-in::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 30px; margin-top: -11px; background: var(--gold); border: 3px solid var(--ink); border-radius: 0; box-shadow: 3px 3px 0 var(--ink); }
+  .sld-in::-moz-range-thumb { width: 16px; height: 24px; background: var(--gold); border: 3px solid var(--ink); border-radius: 0; box-shadow: 3px 3px 0 var(--ink); }
+
+  .files { list-style: none; padding: 0; margin: 4px 0 20px; display: grid; gap: 8px; }
+  .files li { display: flex; justify-content: space-between; gap: 10px; border-bottom: 2px solid currentColor; padding-bottom: 6px; }
+  .files b { font-family: var(--d); font-weight: 400; text-transform: uppercase; font-size: 1.1rem; }
+  .files span { opacity: .8; font-size: .95rem; }
+
+  .chars { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 10px; }
+  .chars span { aspect-ratio: 1; display: grid; place-items: center; border: 2px solid var(--ink); font-family: 'Skilful Steering', var(--d); font-size: 38px; transition: background .1s, color .1s, box-shadow .1s, transform .1s var(--x); cursor: default; }
+  .chars span:hover { background: var(--ink); color: var(--white); box-shadow: 3px 3px 0 var(--g2); transform: translate(-2px, -2px); }
+
+  footer { border-top: 3px solid var(--ink); padding: 18px 24px; font-size: .9rem; display: flex; justify-content: space-between; gap: 12px; }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(36px); } }
+  @media (max-width: 820px) {
+    .lock, .grid2 { grid-template-columns: 1fr; }
+    .tester { font-size: 64px; }
+    .row { flex-direction: column; }
+    .top .tag { display: none; }
   }
-  button:hover, .btn:hover { transform:translateY(-2px); }
-  button:active, .btn:active { transform:translateY(1px); }
-  button:disabled { opacity:.6; cursor:wait; }
-  .btn.ghost { background:transparent; color:var(--line); border:2px solid #3a3d42; }
-  .btn.ghost:hover { border-color:var(--line); }
-  .err { color:#ff7a7f; min-height:1.5em; margin-top:12px; font-size:.95rem; }
-  .shake { animation:shake .35s var(--ease); }
-  @keyframes shake { 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
-  #app { display:none; }
-  #app.on { display:block; animation:rise .6s var(--ease); }
-  @keyframes rise { from{opacity:0;transform:translateY(16px)} }
-  .ss { font-family:"Skilful Steering", system-ui; }
-  .panel { background:var(--tar2); border-radius:16px; padding:24px; margin-bottom:20px; }
-  .bar { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-bottom:18px; }
-  .bar label { color:var(--dim); font-size:.9rem; display:flex; align-items:center; gap:10px; }
-  input[type=range] { accent-color:var(--line); width:160px; }
-  .tester { font-size:96px; line-height:1.1; outline:none; word-break:break-word; min-height:1.2em; }
-  .tester:focus { outline:none; }
-  h2 { font-size:.8rem; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin-bottom:14px; font-weight:600; }
-  .downloads { display:flex; flex-wrap:wrap; gap:10px; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(64px,1fr)); gap:6px; }
-  .grid span { aspect-ratio:1; display:grid; place-items:center; background:var(--tar); border-radius:8px; font-size:34px; }
-  .note { color:var(--dim); font-size:.9rem; margin-top:12px; }
-  @media (max-width:600px) { .tester { font-size:60px; } main { padding-top:36px; } }
-  @media (prefers-reduced-motion:reduce) { * { animation:none !important; transition:none !important; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
-<div class="road"></div>
-<main>
-  <img class="title" src="title.png" alt="Skilful Steering" width="881" height="426">
+<header class="top">
+  <span class="name">Fonts</span>
+  <span class="tag">Phoenix</span>
+  <span class="sp"></span>
+  <button class="btn" id="lockbtn" type="button" style="color:var(--white)">Lock</button>
+</header>
 
-  <section class="lock" id="lock">
-    <p>Enter the password to unlock the font.</p>
+<main>
+  <section class="hero">
+    <div class="ht" aria-hidden="true"><i></i><i></i><i></i></div>
+    <span class="label">Typeface</span>
+    <img class="title" src="title.png" alt="Skilful Steering" width="1353" height="583">
+    <p>Road lettering drawn by hand, turned into a font. Junction-sign T, road I, learner-plate L.</p>
+  </section>
+
+  <section class="plate lock" id="lock">
+    <div>
+      <h2>Unlock</h2>
+      <p>Enter the password to try the font and download it.</p>
+    </div>
     <form id="form" autocomplete="off">
-      <input type="password" id="pw" placeholder="Password" aria-label="Password" autofocus>
-      <button id="go" type="submit">Unlock</button>
+      <div class="row">
+        <input type="password" id="pw" placeholder="Password" aria-label="Password" autofocus>
+        <button class="btn primary" id="go" type="submit">Unlock</button>
+      </div>
+      <div class="err" id="err" role="alert"></div>
     </form>
-    <div class="err" id="err"></div>
   </section>
 
   <section id="app">
-    <div class="panel">
-      <div class="bar">
-        <label>Size <input type="range" id="size" min="24" max="200" value="96"></label>
-        <button class="btn ghost" type="button" data-t="SKILFUL STEERING">Title</button>
-        <button class="btn ghost" type="button" data-t="Turn left at the T-junction, then keep steering!">Sentence</button>
-        <button class="btn ghost" type="button" data-t="ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789">Alphabet</button>
+    <div class="grid2">
+      <div class="plate">
+        <h2>Try it</h2>
+        <div class="tools">
+          <button class="btn on" type="button" data-t="SKILFUL STEERING">Title</button>
+          <button class="btn" type="button" data-t="Turn left at the T-junction, then keep steering!">Sentence</button>
+          <button class="btn" type="button" data-t="ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789">Alphabet</button>
+        </div>
+        <div class="sld">
+          <div class="sld-top"><span class="sld-l">Size</span><span class="sld-v" id="sizev">104px</span></div>
+          <input class="sld-in" type="range" id="size" min="24" max="200" value="104" aria-label="Size">
+        </div>
+        <div class="tester" id="tester" contenteditable="true" spellcheck="false">SKILFUL STEERING</div>
       </div>
-      <div class="tester ss" id="tester" contenteditable="true" spellcheck="false">SKILFUL STEERING</div>
+
+      <div class="plate ink">
+        <h2>Download</h2>
+        <ul class="files">
+          <li><b>TTF</b><span>Install on Windows or Mac</span></li>
+          <li><b>OTF</b><span>Install on Windows or Mac</span></li>
+          <li><b>WOFF2 and WOFF</b><span>Use on websites</span></li>
+        </ul>
+        <button class="btn primary" type="button" id="dlzip" style="background:var(--white);color:var(--ink);border-color:var(--white)">Download zip</button>
+      </div>
     </div>
 
-    <div class="panel">
-      <h2>Download</h2>
-      <div class="downloads">
-        <button type="button" id="dlzip">Download all (.zip)</button>
-      </div>
-      <p class="note">The zip has TTF and OTF to install, plus WOFF2 and WOFF for websites.</p>
-    </div>
-
-    <div class="panel">
+    <div class="plate">
       <h2>Every character</h2>
-      <div class="grid ss" id="grid"></div>
+      <div class="chars" id="chars"></div>
     </div>
   </section>
 </main>
-<div class="road"></div>
+
+<footer><span>Skilful Steering</span><span>Made by Phoenix</span></footer>
 
 <script>
 (() => {
@@ -115,23 +202,25 @@
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
-    if (!pw.value) return;
-    err.textContent = ''; go.disabled = true; go.textContent = 'Checking…';
+    if (!pw.value) { err.textContent = 'Type the password first.'; return; }
+    err.textContent = ''; go.disabled = true; go.textContent = 'Checking';
     try {
       const key = await keyFrom(pw.value);
-      const font = await open(key, 'files/regular.bin');
-      const face = new FontFace('Skilful Steering', font);
+      const face = new FontFace('Skilful Steering', await open(key, 'files/regular.bin'));
       await face.load(); document.fonts.add(face);
       zipBlob = new Blob([await open(key, 'files/pack.bin')], { type: 'application/zip' });
       $('lock').remove();
       $('app').classList.add('on');
-      buildGrid();
+      $('lockbtn').style.display = 'inline-flex';
+      buildChars();
     } catch (x) {
-      err.textContent = 'That password is not right.';
+      err.textContent = 'That password is not right. Try again.';
       form.classList.remove('shake'); void form.offsetWidth; form.classList.add('shake');
       go.disabled = false; go.textContent = 'Unlock'; pw.select();
     }
   });
+
+  $('lockbtn').addEventListener('click', () => location.reload());
 
   $('dlzip').addEventListener('click', () => {
     const a = document.createElement('a');
@@ -140,12 +229,22 @@
     setTimeout(() => URL.revokeObjectURL(a.href), 4000);
   });
 
-  $('size').addEventListener('input', e => { $('tester').style.fontSize = e.target.value + 'px'; });
-  document.querySelectorAll('[data-t]').forEach(b => b.addEventListener('click', () => { $('tester').textContent = b.dataset.t; }));
+  const size = $('size');
+  const setSize = () => {
+    $('tester').style.fontSize = size.value + 'px';
+    $('sizev').textContent = size.value + 'px';
+    size.style.setProperty('--p', ((size.value - size.min) / (size.max - size.min) * 100) + '%');
+  };
+  size.addEventListener('input', setSize); setSize();
 
-  function buildGrid() {
+  document.querySelectorAll('[data-t]').forEach(b => b.addEventListener('click', () => {
+    $('tester').textContent = b.dataset.t;
+    document.querySelectorAll('[data-t]').forEach(x => x.classList.toggle('on', x === b));
+  }));
+
+  function buildChars() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!?.,:;\'"‘’“”-–—_/\\|()[]{}+−=×÷±<>^~*#%@&$£€¢¥©®™°•…«»‹›¡¿§¶←→↑↓ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿŒœŠšŽžŸ';
-    const g = $('grid');
+    const g = $('chars');
     for (const c of chars) { const s = document.createElement('span'); s.textContent = c; g.appendChild(s); }
   }
 })();
