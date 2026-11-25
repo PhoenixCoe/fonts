@@ -155,7 +155,7 @@
           <button class="btn on" type="button" data-t="SKILFUL STEERING">Title</button>
           <button class="btn" type="button" data-t="Turn left at the T-junction, then keep steering!">Sentence</button>
           <button class="btn" type="button" data-t="ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789">Alphabet</button>
-          <button class="btn" type="button" data-t="(STOP) at the (T) junction, (GIVE WAY) at the (RB), then (30) until the (NSL) (L) (P) (!) (NE) (=)">Signs</button>
+          <button class="btn" type="button" data-t="(stop) at the (T) junction, (giveway) at the (rb), then (30) until the (nsl) (L) (P) (!) (noentry) (=)">Signs</button>
         </div>
         <div class="tools">
           <button class="btn" type="button" data-w="300">Light</button>
@@ -264,6 +264,13 @@
     $('tester').style.fontStyle = on ? 'italic' : 'normal';
     $('chars').style.fontStyle = on ? 'italic' : 'normal';
     e.currentTarget.classList.toggle('on', on); e.currentTarget.setAttribute('aria-pressed', on);
+  });
+
+  // Chrome reuses old text layout while you type, so signs never form; flip an unused feature to force a fresh layout
+  let flip = 0;
+  $('tester').addEventListener('input', () => {
+    flip ^= 1;
+    $('tester').style.fontFeatureSettings = '"ss20" ' + flip;
   });
 
   function buildChars() {
