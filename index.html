@@ -83,7 +83,7 @@
   #app.on { display: block; }
   .grid2 { display: grid; grid-template-columns: 1.6fr 1fr; gap: 26px; align-items: start; }
   .tools { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
-  .tester { font-family: 'Skilful Steering', var(--d); font-size: 104px; line-height: 1.08; outline: none; word-break: break-word; min-height: 1.2em; padding: 6px 0; text-transform: none; }
+  .tester { font-variant-ligatures: common-ligatures; font-family: 'Skilful Steering', var(--d); font-size: 104px; line-height: 1.08; outline: none; word-break: break-word; min-height: 1.2em; padding: 6px 0; text-transform: none; }
 
   .sld { display: grid; gap: 4px; margin-bottom: 18px; max-width: 420px; }
   .sld-top { display: flex; align-items: baseline; justify-content: space-between; }
@@ -155,16 +155,12 @@
           <button class="btn on" type="button" data-t="SKILFUL STEERING">Title</button>
           <button class="btn" type="button" data-t="Turn left at the T-junction, then keep steering!">Sentence</button>
           <button class="btn" type="button" data-t="ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789">Alphabet</button>
-          <button class="btn" type="button" data-t="(T) Junction ahead => (P) Parking !! (L) STOP ==">Signs</button>
+          <button class="btn" type="button" data-t="(STOP) at the (T) junction => (P) Parking !! (L) ==">Signs</button>
         </div>
         <div class="tools">
           <button class="btn" type="button" data-w="300">Light</button>
           <button class="btn on" type="button" data-w="400">Regular</button>
           <button class="btn" type="button" data-w="700">Bold</button>
-        </div>
-        <div class="tools">
-          <button class="btn on" type="button" data-f="liga" aria-pressed="true">Joined letters</button>
-          <button class="btn" type="button" data-f="ss02" aria-pressed="false">Road signs</button>
         </div>
         <div class="sld">
           <div class="sld-top"><span class="sld-l">Size</span><span class="sld-v" id="sizev">104px</span></div>
@@ -256,24 +252,10 @@
     document.querySelectorAll('[data-t]').forEach(x => x.classList.toggle('on', x === b));
   }));
 
-  const feats = { liga: true, ss02: false };
-  const setFeats = () => {
-    const v = `"liga" ${feats.liga ? 1 : 0}, "clig" ${feats.liga ? 1 : 0}, "ss02" ${feats.ss02 ? 1 : 0}`;
-    $('tester').style.fontFeatureSettings = v;
-  };
-  document.querySelectorAll('[data-f]').forEach(b => b.addEventListener('click', () => {
-    feats[b.dataset.f] = !feats[b.dataset.f];
-    b.classList.toggle('on', feats[b.dataset.f]); b.setAttribute('aria-pressed', feats[b.dataset.f]);
-    setFeats();
-  }));
-  setFeats();
   document.querySelectorAll('[data-w]').forEach(b => b.addEventListener('click', () => {
     $('tester').style.fontWeight = b.dataset.w;
     $('chars').style.fontWeight = b.dataset.w;
     document.querySelectorAll('[data-w]').forEach(x => x.classList.toggle('on', x === b));
-  }));
-  document.querySelectorAll('[data-t]').forEach(b => b.addEventListener('click', () => {
-    if (b.dataset.t.startsWith('(T)') && !feats.ss02) document.querySelector('[data-f="ss02"]').click();
   }));
 
   function buildChars() {
