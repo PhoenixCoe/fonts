@@ -155,6 +155,16 @@
           <button class="btn on" type="button" data-t="SKILFUL STEERING">Title</button>
           <button class="btn" type="button" data-t="Turn left at the T-junction, then keep steering!">Sentence</button>
           <button class="btn" type="button" data-t="ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789">Alphabet</button>
+          <button class="btn" type="button" data-t="(T) Junction ahead => (P) Parking !! (L) STOP ==">Signs</button>
+        </div>
+        <div class="tools">
+          <button class="btn" type="button" data-w="300">Light</button>
+          <button class="btn on" type="button" data-w="400">Regular</button>
+          <button class="btn" type="button" data-w="700">Bold</button>
+        </div>
+        <div class="tools">
+          <button class="btn on" type="button" data-f="liga" aria-pressed="true">Joined letters</button>
+          <button class="btn" type="button" data-f="ss02" aria-pressed="false">Road signs</button>
         </div>
         <div class="sld">
           <div class="sld-top"><span class="sld-l">Size</span><span class="sld-v" id="sizev">104px</span></div>
@@ -169,6 +179,8 @@
           <li><b>TTF</b><span>Install on Windows or Mac</span></li>
           <li><b>OTF</b><span>Install on Windows or Mac</span></li>
           <li><b>WOFF2 and WOFF</b><span>Use on websites</span></li>
+          <li><b>Light, Regular, Bold</b><span>All three in every format</span></li>
+          <li><b>Licence</b><span>Private. For Phoenix only</span></li>
         </ul>
         <button class="btn primary" type="button" id="dlzip" style="background:var(--white);color:var(--ink);border-color:var(--white)">Download zip</button>
       </div>
@@ -181,7 +193,7 @@
   </section>
 </main>
 
-<footer><span>Skilful Steering</span><span>Made by Phoenix</span></footer>
+<footer><span>Skilful Steering. Copyright 2026 Phoenix. All rights reserved.</span><span>Private font, for Phoenix only</span></footer>
 
 <script>
 (() => {
@@ -206,8 +218,10 @@
     err.textContent = ''; go.disabled = true; go.textContent = 'Checking';
     try {
       const key = await keyFrom(pw.value);
-      const face = new FontFace('Skilful Steering', await open(key, 'files/regular.bin'));
-      await face.load(); document.fonts.add(face);
+      for (const [w, f] of [[400, 'regular'], [300, 'light'], [700, 'bold']]) {
+        const face = new FontFace('Skilful Steering', await open(key, 'files/' + f + '.bin'), { weight: String(w) });
+        await face.load(); document.fonts.add(face);
+      }
       zipBlob = new Blob([await open(key, 'files/pack.bin')], { type: 'application/zip' });
       $('lock').remove();
       $('app').classList.add('on');
@@ -240,6 +254,26 @@
   document.querySelectorAll('[data-t]').forEach(b => b.addEventListener('click', () => {
     $('tester').textContent = b.dataset.t;
     document.querySelectorAll('[data-t]').forEach(x => x.classList.toggle('on', x === b));
+  }));
+
+  const feats = { liga: true, ss02: false };
+  const setFeats = () => {
+    const v = `"liga" ${feats.liga ? 1 : 0}, "clig" ${feats.liga ? 1 : 0}, "ss02" ${feats.ss02 ? 1 : 0}`;
+    $('tester').style.fontFeatureSettings = v;
+  };
+  document.querySelectorAll('[data-f]').forEach(b => b.addEventListener('click', () => {
+    feats[b.dataset.f] = !feats[b.dataset.f];
+    b.classList.toggle('on', feats[b.dataset.f]); b.setAttribute('aria-pressed', feats[b.dataset.f]);
+    setFeats();
+  }));
+  setFeats();
+  document.querySelectorAll('[data-w]').forEach(b => b.addEventListener('click', () => {
+    $('tester').style.fontWeight = b.dataset.w;
+    $('chars').style.fontWeight = b.dataset.w;
+    document.querySelectorAll('[data-w]').forEach(x => x.classList.toggle('on', x === b));
+  }));
+  document.querySelectorAll('[data-t]').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.t.startsWith('(T)') && !feats.ss02) document.querySelector('[data-f="ss02"]').click();
   }));
 
   function buildChars() {
