@@ -155,12 +155,13 @@
           <button class="btn on" type="button" data-t="SKILFUL STEERING">Title</button>
           <button class="btn" type="button" data-t="Turn left at the T-junction, then keep steering!">Sentence</button>
           <button class="btn" type="button" data-t="ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789">Alphabet</button>
-          <button class="btn" type="button" data-t="(STOP) at the (T) junction => (P) Parking !! (L) ==">Signs</button>
+          <button class="btn" type="button" data-t="(STOP) at the (T) junction, (GIVE WAY) at the (RB), then (30) until the (NSL) (L) (P) (!) (NE) (=)">Signs</button>
         </div>
         <div class="tools">
           <button class="btn" type="button" data-w="300">Light</button>
           <button class="btn on" type="button" data-w="400">Regular</button>
           <button class="btn" type="button" data-w="700">Bold</button>
+          <button class="btn" type="button" id="ital" aria-pressed="false">Italic</button>
         </div>
         <div class="sld">
           <div class="sld-top"><span class="sld-l">Size</span><span class="sld-v" id="sizev">104px</span></div>
@@ -175,7 +176,7 @@
           <li><b>TTF</b><span>Install on Windows or Mac</span></li>
           <li><b>OTF</b><span>Install on Windows or Mac</span></li>
           <li><b>WOFF2 and WOFF</b><span>Use on websites</span></li>
-          <li><b>Light, Regular, Bold</b><span>All three in every format</span></li>
+          <li><b>Light, Regular, Bold</b><span>Each with an italic, in every format</span></li>
           <li><b>Licence</b><span>Private. For Phoenix only</span></li>
         </ul>
         <button class="btn primary" type="button" id="dlzip" style="background:var(--white);color:var(--ink);border-color:var(--white)">Download zip</button>
@@ -214,8 +215,8 @@
     err.textContent = ''; go.disabled = true; go.textContent = 'Checking';
     try {
       const key = await keyFrom(pw.value);
-      for (const [w, f] of [[400, 'regular'], [300, 'light'], [700, 'bold']]) {
-        const face = new FontFace('Skilful Steering', await open(key, 'files/' + f + '.bin'), { weight: String(w) });
+      for (const [w, f, st] of [[400, 'regular', 'normal'], [300, 'light', 'normal'], [700, 'bold', 'normal'], [400, 'italic', 'italic'], [300, 'lightitalic', 'italic'], [700, 'bolditalic', 'italic']]) {
+        const face = new FontFace('Skilful Steering', await open(key, 'files/' + f + '.bin'), { weight: String(w), style: st });
         await face.load(); document.fonts.add(face);
       }
       zipBlob = new Blob([await open(key, 'files/pack.bin')], { type: 'application/zip' });
@@ -257,6 +258,13 @@
     $('chars').style.fontWeight = b.dataset.w;
     document.querySelectorAll('[data-w]').forEach(x => x.classList.toggle('on', x === b));
   }));
+
+  $('ital').addEventListener('click', e => {
+    const on = $('tester').style.fontStyle !== 'italic';
+    $('tester').style.fontStyle = on ? 'italic' : 'normal';
+    $('chars').style.fontStyle = on ? 'italic' : 'normal';
+    e.currentTarget.classList.toggle('on', on); e.currentTarget.setAttribute('aria-pressed', on);
+  });
 
   function buildChars() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!?.,:;\'"‘’“”-–—_/\\|()[]{}+−=×÷±<>^~*#%@&$£€¢¥©®™°•…«»‹›¡¿§¶←→↑↓ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿŒœŠšŽžŸ';
